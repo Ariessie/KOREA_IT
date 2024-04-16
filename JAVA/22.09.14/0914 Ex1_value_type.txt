@@ -1,0 +1,28 @@
+package ex2_value_type;
+
+public class Ex1_valueType {
+
+	public static void main(String[] args) {
+		
+		//논리형
+		boolean b;
+		b = true;
+		System.out.println("b: "+b);
+		
+		b = false;
+		System.out.println("b: "+b);
+		
+		// b = 10; 타입이 다른 값을 넣는 것은 불가능
+		
+		boolean ba = true;
+		 System.out.println("--------");
+
+		//문자형 : 문자형은 홑따옴표 안에 한 글자만 저장 가능한 자료형
+		
+		char ch = 'A'+1;
+		System.out.println("ch: "+ch);
+		char ch2 = 65; //아스키코드를 사용
+		System.out.println("ch2: "+ch2);
+	}//main
+
+}//class
