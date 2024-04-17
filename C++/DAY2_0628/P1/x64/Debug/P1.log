@@ -1,0 +1,4 @@
+﻿  practice1.c
+C:\Korea IT\c++\DAY2_0628\P1\practice1.c(38,6): warning C4101: 'num3' :참조되지 않은 지역 변수입니다.
+C:\Korea IT\c++\DAY2_0628\P1\practice1.c(38,12): warning C4101: 'num4' :참조되지 않은 지역 변수입니다.
+  P1.vcxproj -> C:\Korea IT\c++\DAY2_0628\x64\Debug\P1.exe

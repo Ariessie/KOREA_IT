@@ -1,0 +1,18 @@
+C++ 수업
+
+#Day1
+강사님 : 김송아
+이메일 : songa.kim@kakao.com
+
+하루 일정
+: 9시 ~ 11시 20분
+: 15분 알쓸송잡
+: 이론 + 예제
+: 40 10 40 10
+
+<Visual Studio>
+other : Eclipse(java) , Intellij(Web)
+
+<알쓸송잡>
+네이버 / 카카오 -> 플랫폼
+ 
