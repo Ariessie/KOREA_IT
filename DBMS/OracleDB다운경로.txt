@@ -1,0 +1,7 @@
+www.oracle.com접속 -> Products메뉴 선택 -> 
+Software항목에서 Oracle Database메뉴 클릭 -> 
+Download Database 19c클릭 ->
+스크롤을 아래로 내려 Oracle Database Express Edition메뉴에서
+Oracle Database 11g Release 2 Express Edition for Windows 64 클릭 ->
+Oracle Database 11gR2 Express Edition for Windows x64 다운로드
+

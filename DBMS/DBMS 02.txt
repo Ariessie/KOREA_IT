@@ -1,0 +1,269 @@
+#2020_11_05
+
+[ 5. SQL 함수 ]
+> 기본적으로 쿼리문을 더욱 강력하게 하고 데이터값을 조작하는데
+   도움이 되도록 하는 함수가 SQL함수
+   1) 자원에 대한 연산을 수행할 수 있다.
+   2) 개별적인 데이터 항목을 수행할 수 있다.
+
+
+5-1. 문자함수
+  1) LOWER: 알파벳 값을 소문자로 변환
+  2) UPPER: 알파벳 값을 대문자로 변환
+  3)INITCAP: 알파벳의 첫 글자만 대문자로 변환
+
+**오라클에는 dual이라는 가상 테이블이 제공된다.
+
+	          << UPPER >>
+
+EX1)  select upper('abc') from dual;
+EX2)  select upper('good morning') from dual;
+
+실제 테이블에 적용하는 방법.
+EX1)  select upper(first_name) upper, first_name from employees;
+
+EX3) 사원테이블에서 Michael이라는 이름의 사원에 대한 
+       사번, 이름, 직종, 입사일을 검색
+
+select employee_id, first_name, job_id, hire_date 
+from employees
+where UPPER(first_name) = UPPER('Michael');
+
+
+	          << LOWER >>
+
+EX1) select LOWER('GOOD MORNING') from dual;
+
+EX2) select employee_id, first_name, job_id
+from employees
+where LOWER(fist_name) = LOWER('Michael');
+
+
+	            << INITCAP >>
+-- initcap : 첫 문자를 대문자로 변환하는 함수
+  	   공백이나 /를 구분자로 인식함
+EX1) select INITCAP('good morning') from dual;
+EX2) select INITCAP('good/morning') from dual;
+
+
+
+5-2. 조작함수
+  1) CONCAT : 두 문자열을 연결(합성) , '+'와 비슷한 기능. 
+  2) SUBSTR : 특정 문장 추출
+  3) LENGTH : 문자열의 길이
+  4) REPLACE : 특정 값을 찾아 원하는 값으로 대체하는 메서드
+
+
+EX1) CONCAT
+  > select concat('hi', 'michael') from dual;
+  > select concat( first_name , last_name)
+     from employees;
+
+Q1) 사원테이블에서 모든 사원들의 이름과 성을 이어붙인 후 
+     full_name이라는 칼럼으로 출력하시오
+
+> select concat(first_name, last_name) full_name
+from employees;
+
+> select first_name || '+' || last_name AS full_name
+from employees;
+
+** 문장과 문장을 연결할 때 || 쓸 수도 있다.
+
+
+EX2) SUBSTR
+  a > select substr('good morning john',8,4) from dual;
+     8번째 글자부터 4글자 잘라내기.
+  b > select substr('good morning john',8) from dual;
+     8번째 글자 뒤로 모든 글자 잘라내기.
+  c > select substr('good morning john',-4) from dual;
+     8번째 글자 뒤로 모든 글자 잘라내기.
+  d> select hire_date, substr(hire_date,7) hire_year from employees;
+      입사한 연도만 출력
+
+
+EX3) LENGTH 
+  > select length('michael') from dual;
+
+Q1) 사원테이블에서 이름의 길이가 6자 이상의 사원의 사번, 이름을 출력
+select employee_id,first_name
+from employees
+where length(first_name) >= 6;
+
+EX4) REPLACE
+  > select replace('good moring tom', 'tom','alexis') from dual;
+
+Q1) 사원테이블에서 부서 번호가 50번인 사원들의 이름 중
+     'el'을 모두 '**'로 대체하여 출력
+부서번호가 50번인 사원들만 사번, 이름 직종 순으로 출력
+
+select employee_id,  replace(first_name, 'el','**') re_name, job_id
+from employees
+where department_id = 50;
+
+
+5-3 숫자함수.
+  1) ROUND :  반올림
+  2) TRUNC : 버림
+  3) POWER : 제곱
+  4) MOD : 나머지 값
+
+
+<<ROUND>>
+
+EX1) select round(123.567, 2) from dual;
+EX2) select round(0.567) from dual;
+
+
+<<TRUNC>>
+EX1) select trunc(123.4567) from dual;
+EX2) select trunc(123.4567,2) from dual;
+
+
+
+<<POWER>>
+EX1) select power(4,2) from dual;
+
+
+<<MOD>>
+EX1) select mod(10,3) from dual;
+
+Q1) 짝수 사원을 가진 사원들의 모든 정보를 조희
+
+select * from employees
+where mod(employee_id, 2) = 0;
+
+
+5-4 날짜 함수
+ **오라클에서 현재 날짜 가져오는 키워드는 sysdate다.
+    EX1) select sysdate from dual;
+
+  1) ADD_MONTHS : 특정 날짜로 부터 몇개월 후의 날짜를 알고 싶을때
+  2) MONTHS_BETWEEN : 두 날짜 사이의 개월 수를 구함 
+  
+
+<<ADD_MONTHS>>
+
+EX1) select sysdate, add_months(sysdate, 2)from dual;
+
+Q1) 사원테이블에서 모든 사원의 입사일로부터 6개월 뒤의 날짜 출력
+이름, 입사일, 6개월 뒤 날짜, 순으로 출력
+
+select first_name, hire_date, add_months(hire_date, 6) six_month
+from employees;
+
+
+Q2) 사번이 120번인 사원이 입사후 3년 6개월째 되는 날 진급예정이다.
+진급 예정 날짜를 구하시오.
+
+select hire date, add_months(hire_date, 12*3+6) promot
+from employees
+where employee_id = 120;                  
+
+
+
+<<MONTHS_BETWEEN>>
+EX1) select trunc( months_between(sysdate, '01/01/2015') )  mon from dual;
+
+Q1) 모든 사원들이 입사일로부터 오늘까지 몇개월이 경과했는지 출력
+
+ select employee_id, first_name, trunc(months_between(sysdate, hire_date),2) work from employees
+order by hire DESC;
+
+
+Q2) 입사기간이 160개월 이상인 사원들의 이름, 입사일, 입사 후 개월수 출력
+
+
+select first_name, hire_date, 
+	trunc(months_between(sysdate, hire_date)) work
+from employees
+where months_between(sysdate, hire_date) >=160;
+
+
+
+---------------------------------------------
+
+
+6. 데이터 형 변환 : SQL문장 내에서 특정 자원을 원하는 타입으로 변경하는 것   
+   
+
+- 날짜 형식의 formatting 모델
+  1) SCC 또는  CC : 세기
+  2) YYYY 또는 YY : 년도
+  3) MM :월
+  4) MON : 월명 , MONTH :월명 (FULL)
+     DB 버전에 따라 MONTH로 써야 하는 경우도 있다.
+  5) DD: 일
+  6) DAY: 요일
+  
+
+select TO_CHAR(hire_date, 'SCC : YYYY-MM(MONTH)-DD-DAY') from employees;
+
+
+
+---------------------------------------------
+
+7. 그룹함수 :
+   여러개의 행 또는 테이블 전체 조회를 통해 하나의 결과를 가져오는 함수
+    일반적으로 그룹함수와 일반 함수는 같이 쓸 수 없다.
+
+**** 중요 ****
+1) AVG() : 평균 값
+2) COUNT() : 반환된 행의 갯수
+3) MAX() : 최대값을 구하는 함수
+4) MIN() : 최소값을 구하는 함수
+5) SUM() : 총 합
+
+
+<<count>>
+
+EX1) 사원테이블의 전체 인원수를 출력.
+
+select COUNT(*) allnum from employees;
+
+
+EX2) 사원테이블에서 보너스를 받는 사원의 수를 출력.
+
+select COUNT(commission_pct) bonus from employees;
+
+
+EX3) 사원테이블에서 부서를 속해있는 사원의 수를 출력.
+select COUNT( department_id) bonus from employees;
+
+
+EX4) 관리자의 수를 출력
+distinct: 중복 값 제외
+select COUNT(distinct manager_id) from employees;
+
+
+
+Q1) 사원테이블에서 직종이 SA_REP인 사원들의 평균 급여, 
+급여최고액, 급여최저액, 급여의 총 합계를 출력하시오.
+
+select AVG(Salary), MAX(Salary), MIN(Salary), SUM(Salary)
+from employees
+where job_id = 'SA_REP';
+
+Q2) 사원테이블에 등록되어 있는 모든 사원의 수, 보너스를 받는 인원수, 전체 사원 급여의 평균, 등록되어있는 부서의 갯수를 화면에 출력
+
+select count(*), count(commission_pct), round(avg(salary),2) allavg, count(distinct department_id)
+from employees;
+
+
+Q3) 사원테이블에서 80번 부서에 속하는 사원들의
+연봉의 평균을 소수점 두자리까지 반올림하여 출력
+
+select round(avg(salary),2)
+from employees
+where department_id = 80;
+
+
+Q4)  사원테이블에서 50번 부서에 속하는 사원들의
+급여의 최대값과 최소값을 출력하세요
+
+
+select max(salary), min(salary)
+from employees
+where department_id = 50;
+
+

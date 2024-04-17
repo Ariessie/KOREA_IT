@@ -1,0 +1,190 @@
+SQL의 자료형
+
+*1) NUMBER
+ > DB에 숫자데이터를 저장하기 위해 제공되는 자료형
+id number (3) : 999까지 저장 가능 3,2 : 999.99까지 저장 가능
+2) VARCHAR: 고정길이의 문자데이터를 저장하므로 메모리 낭비가 심하다.
+*3) VARCHAR2 : 가변길이의 문자데이터를 저장하므로 메모리 낭비가 줄어든다.
+ > DB에 문장데이터를 저장하기 위한 자료형
+*4) DATE :날짜형식의 데이터를 저장하기 위한 자료형
+*5)CLOB: 가변길이의 문장데이터를 저장하며 최대 4GB이상의 텍스트 데이터 저장가능
+
+--임시테이블
+-- primary key : 기본키, 고유의 식별자로써 속성에 대한 중복을 방지하는 키
+-- candidate key : 후보키, name,age등 기본키가 될 자격이 있는 컬럼등
+-- foreign key : 외래키, 한 테이블의 컬럼이 다른 테이블의 기본키가 되는 것.
+
+create table person(
+	idx number (3) primary key,
+	name VARCHAR2(50),
+	regidate DATE,
+	age NUMBER(3)
+	
+);
+
+
+
+-----------------------------------------------
+
+
+9. join : 데이터베이스에서 테이블과 테이블간의 연결을 위한 연결성
+
+예) 각 부서가 위치하고 있는 도시명을 출력해보자
+
+select d.department_id, d.department_name, d.location_id, l.location_id, l.city 
+from departments d, locations l
+where d.location_id = l.location_id;
+
+
+예) 사원테이블에서 각 부서번호에 해당되는 실제 부서의 이름을 가져와보자
+
+select emp.first_name, emp.department_id, dep.department_id, dep.department_name
+from employees emp, departments dep
+where emp.department_id = dep.department_id;
+
+문) 사원테이블에서 직종이 'it_prog'인 사원들의 정보를 
+사번, 이름, 직종, 급여, 부서명, 도시명 순으로 출력하자
+
+select e.employee_id, e.first_name, e.job_id, e.salary, d.department_name, l.city
+from employees e, departments d, locations l
+where e.department_id = d.department_id 
+and d.location_id = l.location_id 
+and e.job_id = 'IT_PROG';
+
+
+문) 지역(location) 테이블로부터 department_name과 city를 출력하되
+부서테이블과 지역테이블의 location_id가 같은 경우에만 출력
+
+select d.department_name, l.city
+from departments d, locations l
+where d.location_id = l.location_id;
+
+문) 사원, 부서, 지역 테이블로부터 이름, 이메일, 부서번호, 부서이름, 지역번호(location_id), city 정보를 출력하되, 부서번호와 지역번호가 일치하며 
+city가 Seattle인 경우의 결과를 출력
+
+select e.first_name, e.email, e.department_id, d.department_name, l.location_id, l.city
+from employees e, departments d, locations l
+where e.department_id = d.department_id
+and d.location_id =  l.location_id
+and l.city = 'Seattle';
+
+10.view : 가상의 테이블
+- 본래 테이블에는 존재하지 않는 정보를 추가로 기입하여 조회하기 위한 용도로 사용하는 가상의 테이블
+
+create or replace view EMP_VIEW AS
+select employee_id, first_name, job_id, hire_date, (commission_pct * salary) com
+from employees;
+
+select * from emp_view;
+
+예) 사원테이블에서 월급에 대한 순위를 매겨 출력
+*view를 만들땐 as가 꼭 필요하다.
+
+create or replace view EMPLOYEE_VIEW AS
+select e.*,
+rank() over( order by e.salary DESC ) sal_rank
+from (select * from employees) e
+order by sal_rank;
+
+select * from employee_view; //조회
+
+
+
+-----------------------------------------------
+11.테이블 생성하기!!
+> unique : 중복 방지
+> not null : null데이터를 추가하지 못 한다. 빈값 허용 x
+
+create table member_t(
+	id VARCHAR2(30) primary key,
+	pwd VARCHAR2(30) not null,
+	name VARCHAR2(50) ,
+	email VARCHAR2(50) unique, 
+	phone VARCHAR2(50)
+
+);
+
+-- 데이터 조회
+select *from member_t;
+
+
+
+11-1 컬럼추가 (ADD)
+
+예) member_t테이블에 reg_date라는 가입 날짜 저장 컬럼을 추가해보자.
+ ALTER table member_t ADD reg_date DATE;
+
+
+11-2 컬럼 수정(MODIFY)
+예 ) member_t테이블의 name컬럼을 100바이트를 저정할 수 있도록 수정
+ALTER  table member_t MODIFY name VARCHAR2(100);
+
+11-3 컬럼 삭제 (DROP COLUMN)
+예) member_t테이블의 phone컬럼을 삭제해보자
+ALTER table member_t DROP COLUMN phone;
+
+11-4. 테이블 삭제 (DROP TABLE)
+ DROP TABLE member_t;
+
+
+----------------------------------------------
+create table memo_t(
+	idx NUMBER(3) primary key,
+	title VARCHAR2(50) not null,
+	content VARCHAR2(4000),
+	pwd VARCHAR2(20) not null,
+	writer VARCHAR2(100) not null,
+	write_date DATE	
+);
+
+12. 테이블에 자원 추가하기 (INSERT)
+-- insert into , values 는 세트
+insert into memo_t values( 1, '메모1', '내용1','1111','홍길동', sysdate  );
+
+-- select를 제외한  insert, update, delete문은 반드시 commit;을 해줘야 한다.
+-- commit;을 통해 추가,수정, 삭제하고자 하는 내용을 물리적으로 갱신시킬 수 있다.
+
+
+insert into memo_t values( 2, '메모2', '내용2','2222','홍길동2', sysdate  );
+commit;
+
+
+
+12-1 자원수정(update)
+-- 특정 자원들을 수정하고자 할 때 사용함.
+-- update (테이블 명) set
+
+update memo_t set 
+pwd = '5555', writer = '김길동'
+where idx = 1;
+commit;
+
+12-2 자원삭제 (delete)
+-- 특정 자원을 삭제할 때 사용
+delete from memo_t
+where idx=2;
+commit;
+
+
+13. 시퀀스 : 테이블에 1부터 순차적인 값을 자동으로 저장되도록 하는 객체
+13-1 시퀀스 생성하기 (create sequence 시퀀스명;)
+
+create sequence memo_seq;
+
+insert into MEMO_T values(memo_seq.nextval,'메모2', '2222', '홍길동2', sysdate);
+
+
+insert into memo_t values(memo_seq.nextval, '메모2', '내용2','2222','홍길동2', sysdate  );
+
+
+
+
+
+
+
+
+
+
+
+
+
